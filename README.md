@@ -32,25 +32,14 @@ SingleHiggsCombinations/
 
 ## First-Time Setup
 
-### 1. Initialize Git and Submodules
-
-If you just cloned this repository (or will clone it later):
+### 1. Clone the Repository
 
 ```bash
+git clone --recursive <repository-url> SingleHiggsCombinations
 cd SingleHiggsCombinations
-
-# If you're setting this up as a git repo for the first time:
-git init
-git add .
-git commit -m "Initial commit"
-
-# Convert inference to a proper submodule:
-rm -rf inference
-git submodule add ssh://git@gitlab.cern.ch:7999/hh/tools/inference.git inference
-git submodule update --init --recursive
 ```
 
-**Note**: The `inference` directory is currently cloned as a regular directory. When you initialize git, you should convert it to a proper submodule using the commands above.
+The `--recursive` flag automatically initializes and clones all submodules (including the inference tools).
 
 ### 2. Source the Setup Script
 
@@ -66,9 +55,17 @@ On first run, this will:
 
 **Important**: The setup process may take 15-30 minutes on first run due to CMSSW compilation.
 
-### 3. Configure Your Setup
+### 3. Index Law Tasks
 
-You'll be prompted for:
+```bash
+law index --verbose
+```
+
+This makes law aware of both DHI and SHI tasks for command-line autocompletion.
+
+## Configuration
+
+During the first setup, you'll be prompted for:
 - `DHI_USER`: Your CERN/WLCG username
 - `DHI_DATA`: Local data directory (default: `./data`)
 - `DHI_STORE`: Output store directory
@@ -76,14 +73,6 @@ You'll be prompted for:
 - And other configuration options
 
 These settings are saved to `.setups/shi_default.sh` for future use.
-
-### 4. Index Law Tasks
-
-```bash
-law index --verbose
-```
-
-This makes law aware of both DHI and SHI tasks for command-line autocompletion.
 
 ## Subsequent Usage
 
