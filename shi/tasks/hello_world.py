@@ -66,7 +66,12 @@ class HelloWorld(PlotUpperLimits):
         if isinstance(output, dict):
             self.publish_message(">>> Outputs:")
             for key, target in output.items():
-                self.publish_message(f"    - {key}: {target.path}")
+                if isinstance(target, list):
+                    self.publish_message(f"    - {key}:")
+                    for t in target:
+                        self.publish_message(f"        {t.path}")
+                else:
+                    self.publish_message(f"    - {key}: {target.path}")
         else:
             self.publish_message(f">>> Output: {output.path}")
 
