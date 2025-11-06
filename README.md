@@ -283,9 +283,3 @@ source setup.sh shi_default
 - [DHI Tasks Documentation](https://cms-hh.web.cern.ch/cms-hh/tools/inference/index.html)
 - [Law Framework](https://law.readthedocs.io/)
 - [Combine Tool](https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/)
-
-## Contact
-
-For questions about this repository, contact Massimiliano Galli.
-
-For questions about the DHI tools, see the [inference repository](https://gitlab.cern.ch/hh/tools/inference).
