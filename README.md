@@ -10,6 +10,8 @@ This repository uses the HH inference tools as a foundation and adds custom task
 - **Custom tasks**: Extends DHI tasks with additional functionality
 - **Analysis-specific workflows**: Tailored for Single Higgs combinations
 
+> **⚠️ Known Issue**: The inference tool examples and HelloWorld task do not work with Combine v10.3.1 due to segmentation faults in RooFit's compilation system. If you encounter crashes, see the [Using DHI Default Versions](#using-dhi-default-versions) section to switch to the tested v9.1.0.
+
 ## Repository Structure
 
 ```
@@ -85,15 +87,46 @@ source setup.sh
 
 This will use your saved configuration from `.setups/shi_default.sh`.
 
-## Using Custom Combine Version
+## Combine Version Configuration
 
-This repository uses **Combine v10.3.1** instead of the DHI default (v9.1.0). The setup script will show a warning about this.
+### Using DHI Default Versions
+
+This repository is configured to use **Combine v10.3.1** by default, but the inference tool examples were tested with **v9.1.0**. To use the DHI-tested default versions:
+
+```bash
+# Remove any custom version settings
+unset DHI_COMBINE_VERSION
+unset DHI_CMSSW_VERSION
+unset DHI_SCRAM_ARCH
+
+# Source setup - this will use inference defaults (v9.1.0)
+source setup.sh
+```
+
+Alternatively, you can explicitly set the DHI default versions before sourcing:
+
+```bash
+export DHI_COMBINE_VERSION=v9.1.0
+export DHI_CMSSW_VERSION=CMSSW_14_0_0_pre1
+export DHI_SCRAM_ARCH=el9_amd64_gcc12
+source setup.sh
+```
+
+**Note**: After switching versions, you'll need to reinstall Combine:
+
+```bash
+DHI_REINSTALL_COMBINE=1 source setup.sh
+```
+
+### Using Custom Combine Version
 
 To use a different version:
 
 ```bash
 DHI_COMBINE_VERSION=v10.0.0 source setup.sh
 ```
+
+The setup script will show a warning when using non-default versions.
 
 ## Available Tasks
 
