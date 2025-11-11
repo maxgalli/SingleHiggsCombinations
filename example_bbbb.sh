@@ -1,0 +1,2 @@
+law run PlotLikelihoodScan  --version hh_bbbb_trylaw  --datacards "datacard_bbbb/datacard.txt" --LikelihoodScan-custom-args='--X-rtd TMCSO_AdaptivePseudoAsimov=0 --X-rtd TMCSO_PseudoAsimov=0    --X-rt MINIMIZER_freezeDisassociatedParams   --X-rtd MINIMIZER_multiMin_hideConstants --X-rtd MINIMIZER_multiMin_maskConstraints --X-rtd MINIMIZER_multiMin_maskChannels=2  --freezeParameters lumiscale --setParameters lumiscale=21.8' --pois kl --scan-parameters kl,-5,10,20 --show-points 
+
