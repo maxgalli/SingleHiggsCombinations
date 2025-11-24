@@ -1,34 +1,32 @@
 # Single Higgs Combinations (SHI)
 
-Custom tasks for Single Higgs combinations, extending the [HH inference tools](https://gitlab.cern.ch/hh/tools/inference).
+Custom tasks for Single Higgs combinations, extending the [Combine Workflow](https://gitlab.cern.ch/cms-analysis/general/combine_workflow).
 
 ## Overview
 
-This repository uses the HH inference tools as a foundation and adds custom tasks for Single Higgs analysis combinations. It maintains all the DHI (Di-Higgs Inference) infrastructure while allowing customization of:
+This repository uses the Combine Workflow (CWF) as a foundation and adds custom tasks for Single Higgs analysis combinations. It maintains all the CWF infrastructure while allowing customization of:
 
-- **Combine version**: Uses v10.3.1 (newer than DHI default v9.1.0)
-- **Custom tasks**: Extends DHI tasks with additional functionality
+- **Combine version**: Uses v10.0.0 (configurable)
+- **Custom tasks**: Extends CWF tasks with additional functionality
 - **Analysis-specific workflows**: Tailored for Single Higgs combinations
-
-> **⚠️ Known Issue**: The inference tool examples and HelloWorld task do not work with Combine v10.3.1 due to segmentation faults in RooFit's compilation system. If you encounter crashes, see the [Using DHI Default Versions](#using-dhi-default-versions) section to switch to the tested v9.1.0.
 
 ## Repository Structure
 
 ```
 SingleHiggsCombinations/
-├── inference/              # HH inference tools (submodule)
-│   ├── dhi/               # DHI tasks and utilities
+├── combine_workflow/       # Combine Workflow tools (submodule)
+│   ├── cwf/               # CWF tasks and utilities
 │   ├── modules/           # law and plotlib submodules
-│   └── setup.sh           # DHI setup script
+│   └── setup.sh           # CWF setup script
 ├── shi/                   # Single Higgs Combinations package
 │   ├── __init__.py
 │   └── tasks/             # Custom SHI tasks
 │       ├── __init__.py
-│       └── hello_world.py # Example task extending DHI
+│       └── hello_world.py # Example task extending CWF
 ├── bin/                   # Custom scripts (optional)
 ├── .setups/               # Setup configurations
-├── setup.sh               # Main setup script (wraps inference/setup.sh)
-├── law.cfg                # Law configuration (extends inference/law.cfg)
+├── setup.sh               # Main setup script (wraps combine_workflow/setup.sh)
+├── law.cfg                # Law configuration (extends combine_workflow/law.cfg)
 └── README.md              # This file
 ```
 
@@ -41,7 +39,7 @@ git clone --recursive <repository-url> SingleHiggsCombinations
 cd SingleHiggsCombinations
 ```
 
-The `--recursive` flag automatically initializes and clones all submodules (including the inference tools).
+The `--recursive` flag automatically initializes and clones all submodules (including combine_workflow).
 
 ### 2. Source the Setup Script
 
@@ -50,8 +48,8 @@ source setup.sh
 ```
 
 On first run, this will:
-- Install Combine v10.3.1 and CMSSW_14_1_0_pre4
-- Install the DHI software stack
+- Install Combine v10.0.0 and CMSSW_11_3_4
+- Install the CWF software stack
 - Initialize the law and plotlib submodules
 - Prompt you for configuration (default setup name: `shi_default`)
 
@@ -63,15 +61,15 @@ On first run, this will:
 law index --verbose
 ```
 
-This makes law aware of both DHI and SHI tasks for command-line autocompletion.
+This makes law aware of both CWF and SHI tasks for command-line autocompletion.
 
 ## Configuration
 
 During the first setup, you'll be prompted for:
-- `DHI_USER`: Your CERN/WLCG username
-- `DHI_DATA`: Local data directory (default: `./data`)
-- `DHI_STORE`: Output store directory
-- `DHI_SOFTWARE`: Software installation directory
+- `CWF_USER`: Your CERN/WLCG username
+- `CWF_DATA`: Local data directory (default: `./data`)
+- `CWF_STORE`: Output store directory
+- `CWF_SOFTWARE`: Software installation directory
 - And other configuration options
 
 These settings are saved to `.setups/shi_default.sh` for future use.
@@ -89,85 +87,57 @@ This will use your saved configuration from `.setups/shi_default.sh`.
 
 ## Combine Version Configuration
 
-### Using DHI Default Versions
-
-This repository is configured to use **Combine v10.3.1** by default, but the inference tool examples were tested with **v9.1.0**. To use the DHI-tested default versions:
-
-```bash
-# Remove any custom version settings
-unset DHI_COMBINE_VERSION
-unset DHI_CMSSW_VERSION
-unset DHI_SCRAM_ARCH
-
-# Source setup - this will use inference defaults (v9.1.0)
-source setup.sh
-```
-
-Alternatively, you can explicitly set the DHI default versions before sourcing:
-
-```bash
-export DHI_COMBINE_VERSION=v9.1.0
-export DHI_CMSSW_VERSION=CMSSW_14_0_0_pre1
-export DHI_SCRAM_ARCH=el9_amd64_gcc12
-source setup.sh
-```
-
-**Note**: After switching versions, you'll need to reinstall Combine:
-
-```bash
-DHI_REINSTALL_COMBINE=1 source setup.sh
-```
-
 ### Using Custom Combine Version
 
-To use a different version:
+By default, this repository uses **Combine v10.0.0** with **CMSSW_11_3_4**. To use a different version:
 
 ```bash
-DHI_COMBINE_VERSION=v10.0.0 source setup.sh
+CWF_COMBINE_VERSION=v9.0.0 source setup.sh
 ```
 
-The setup script will show a warning when using non-default versions.
+### Reinstalling Combine
+
+To reinstall Combine from scratch:
+
+```bash
+CWF_REINSTALL_COMBINE=1 source setup.sh
+```
 
 ## Available Tasks
 
-### DHI Tasks
+### CWF Tasks
 
-All tasks from the HH inference tools are available:
+All tasks from the Combine Workflow are available:
 
 ```bash
 law run --help                    # List all tasks
-law run PlotUpperLimits --help    # DHI upper limits task
-law run PlotLikelihoodScan --help # DHI likelihood scan task
-# ... and many more
 ```
 
-See the [DHI documentation](https://cms-hh.web.cern.ch/cms-hh/tools/inference/index.html) for details.
+See the [Combine Workflow documentation](https://gitlab.cern.ch/cms-analysis/general/combine_workflow) for details.
 
 ### SHI Tasks
 
 Custom tasks in the `shi.tasks` namespace:
 
 ```bash
-law run shi.HelloWorld --help     # Example task extending DHI
+law run shi.HelloWorld --help     # Example task extending CWF
 ```
 
 ## Example: Hello World Task
 
-The `HelloWorld` task demonstrates how to extend DHI tasks:
+The `HelloWorld` task demonstrates how to extend CWF tasks:
 
 ```bash
 law run shi.HelloWorld \
     --version dev \
-    --datacards $DHI_EXAMPLE_CARDS \
     --custom-message "My custom analysis!" \
-    --xsec fb \
-    --y-log
+    --datacard path/to/datacard.txt
 ```
 
 This task:
-- Extends `dhi.tasks.limits.PlotUpperLimits`
-- Adds custom printouts before/after running
-- Accepts all PlotUpperLimits parameters plus a custom message
+- Extends `cwf.tasks.base.AnalysisTask`
+- Adds custom printouts and parameters
+- Creates a simple output file demonstrating the workflow
 
 ## Creating New SHI Tasks
 
@@ -179,7 +149,7 @@ To create a new custom task:
 # shi/tasks/my_task.py
 import law
 import luigi
-from dhi.tasks.base import AnalysisTask
+from cwf.tasks.base import AnalysisTask
 
 class MyTask(AnalysisTask):
     task_namespace = "shi"
@@ -189,9 +159,15 @@ class MyTask(AnalysisTask):
         description="my custom parameter"
     )
 
+    def output(self):
+        return self.local_target("my_output.txt")
+
     def run(self):
         # Your custom logic
-        pass
+        output = self.output()
+        output.parent.touch()
+        with output.open("w") as f:
+            f.write(f"Task output: {self.my_param}\n")
 ```
 
 2. **Add to `shi/tasks/__init__.py`**:
@@ -215,21 +191,21 @@ law index --verbose
 4. **Run your task**:
 
 ```bash
-law run shi.MyTask --help
+law run shi.MyTask --version dev --help
 ```
 
-## Updating the Inference Submodule
+## Updating the Combine Workflow Submodule
 
-To update to a newer version of the inference tools:
+To update to a newer version of combine_workflow:
 
 ```bash
-cd inference
+cd combine_workflow
 git fetch origin
 git checkout master  # or specific tag/commit
 git pull
 cd ..
-git add inference
-git commit -m "Update inference submodule"
+git add combine_workflow
+git commit -m "Update combine_workflow submodule"
 ```
 
 ## Environment Variables
@@ -237,18 +213,18 @@ git commit -m "Update inference submodule"
 Key environment variables set by the setup:
 
 - `SHI_BASE`: Base directory of this repository
-- `DHI_BASE`: Base directory of inference submodule
-- `DHI_COMBINE_VERSION`: Combine version (v10.3.1)
-- `DHI_CMSSW_VERSION`: CMSSW version (CMSSW_14_1_0_pre4)
-- `DHI_DATA`: Data directory
-- `DHI_STORE`: Output store directory
-- `DHI_SOFTWARE`: Software installation directory
+- `CWF_BASE`: Base directory of combine_workflow submodule
+- `CWF_COMBINE_VERSION`: Combine version (default: v10.0.0)
+- `CWF_CMSSW_VERSION`: CMSSW version (default: CMSSW_11_3_4)
+- `CWF_DATA`: Data directory
+- `CWF_STORE`: Output store directory
+- `CWF_SOFTWARE`: Software installation directory
 
 ## Troubleshooting
 
-### "inference/setup.sh not found"
+### "combine_workflow/setup.sh not found"
 
-Make sure the inference submodule is initialized:
+Make sure the combine_workflow submodule is initialized:
 
 ```bash
 git submodule update --init --recursive
@@ -259,7 +235,7 @@ git submodule update --init --recursive
 Try reinstalling:
 
 ```bash
-DHI_REINSTALL_COMBINE=1 source setup.sh
+CWF_REINSTALL_COMBINE=1 source setup.sh
 ```
 
 ### Law can't find SHI tasks
@@ -280,7 +256,7 @@ source setup.sh shi_default
 
 ## Documentation
 
-- [DHI Tasks Documentation](https://cms-hh.web.cern.ch/cms-hh/tools/inference/index.html)
+- [Combine Workflow](https://gitlab.cern.ch/cms-analysis/general/combine_workflow)
 - [Law Framework](https://law.readthedocs.io/)
 - [Combine Tool](https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/)
 
@@ -288,4 +264,4 @@ source setup.sh shi_default
 
 For questions about this repository, contact Massimiliano Galli.
 
-For questions about the DHI tools, see the [inference repository](https://gitlab.cern.ch/hh/tools/inference).
+For questions about the Combine Workflow, see the [combine_workflow repository](https://gitlab.cern.ch/cms-analysis/general/combine_workflow).

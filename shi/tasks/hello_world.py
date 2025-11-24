@@ -1,23 +1,23 @@
 # coding: utf-8
 
 """
-Hello World example task that extends DHI tasks.
+Hello World example task that extends CWF tasks.
 
-This demonstrates how to import and extend tasks from the inference repository.
+This demonstrates how to import and extend tasks from the combine_workflow repository.
 """
 
 import law
 import luigi
 
-from dhi.tasks.limits import PlotUpperLimits
+from cwf.tasks.base import AnalysisTask
 
 
-class HelloWorld(PlotUpperLimits):
+class HelloWorld(AnalysisTask):
     """
-    A simple hello world task that extends PlotUpperLimits from DHI.
+    A simple hello world task that extends AnalysisTask from CWF.
 
-    This task adds a custom printout before and after running the parent task,
-    demonstrating how to extend existing DHI functionality.
+    This task demonstrates how to create custom tasks that work with the
+    combine_workflow infrastructure.
     """
 
     task_namespace = "shi"
@@ -27,6 +27,11 @@ class HelloWorld(PlotUpperLimits):
         description="a custom message to print; default: 'Hello from Single Higgs Combinations!'",
     )
 
+    datacard = luigi.Parameter(
+        default="",
+        description="path to a datacard file (optional); default: ''",
+    )
+
     def __init__(self, *args, **kwargs):
         super(HelloWorld, self).__init__(*args, **kwargs)
 
@@ -34,43 +39,45 @@ class HelloWorld(PlotUpperLimits):
         print("\n" + "=" * 80)
         print("SHI HelloWorld Task Initialized!")
         print(f"Custom message: {self.custom_message}")
-        print("This task extends: dhi.tasks.limits.PlotUpperLimits")
+        print("This task extends: cwf.tasks.base.AnalysisTask")
         print("=" * 80 + "\n")
 
+    def output(self):
+        """
+        Define the output target for this task.
+        """
+        return self.local_target("hello_world_output.txt")
+
     @law.decorator.log
-    @law.decorator.notify
     def run(self):
         """
-        Extended run method with custom printouts.
+        Run the hello world task.
         """
-        # Custom printout before running parent task
-        self.publish_message("\n" + "=" * 80)
-        self.publish_message(f">>> {self.custom_message}")
-        self.publish_message(">>> Starting to create upper limit plot using DHI task...")
-        self.publish_message(">>> Task parameters:")
-        self.publish_message(f"    - POIs: {self.pois}")
-        self.publish_message(f"    - Datacards: {len(self.datacards)} file(s)")
-        self.publish_message(f"    - Scan parameters: {self.scan_parameters}")
-        self.publish_message(f"    - Version: {self.version}")
-        self.publish_message("=" * 80 + "\n")
+        # Print task information
+        print("\n" + "=" * 80)
+        print(f">>> {self.custom_message}")
+        print(">>> Running SHI HelloWorld task...")
+        print(">>> Task parameters:")
+        print(f"    - Version: {self.version}")
+        if self.datacard:
+            print(f"    - Datacard: {self.datacard}")
+        print("=" * 80 + "\n")
 
-        # Run the parent task (PlotUpperLimits)
-        result = super(HelloWorld, self).run()
-
-        # Custom printout after running parent task
-        self.publish_message("\n" + "=" * 80)
-        self.publish_message(">>> DHI task completed successfully!")
-
-        # Handle output (can be dict or single target)
+        # Create output
         output = self.output()
-        if isinstance(output, dict):
-            self.publish_message(">>> Outputs:")
-            for key, target in output.items():
-                self.publish_message(f"    - {key}: {target.path}")
-        else:
-            self.publish_message(f">>> Output: {output.path}")
+        output.parent.touch()
 
-        self.publish_message(">>> SHI HelloWorld task finished!")
-        self.publish_message("=" * 80 + "\n")
+        # Write some content to the output file
+        with output.open("w") as f:
+            f.write(f"{self.custom_message}\n")
+            f.write(f"Task version: {self.version}\n")
+            if self.datacard:
+                f.write(f"Datacard: {self.datacard}\n")
+            f.write("\nThis is a simple example task that extends CWF AnalysisTask.\n")
+            f.write("You can use this as a template for creating more complex tasks.\n")
 
-        return result
+        # Print completion message
+        print("\n" + "=" * 80)
+        print(">>> SHI HelloWorld task completed successfully!")
+        print(f">>> Output: {output.path}")
+        print("=" * 80 + "\n")
